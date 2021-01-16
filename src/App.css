@@ -1,4 +1,4 @@
-.app__container {
+.container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -6,8 +6,15 @@
   box-sizing: border-box;
 }
 
-.app__img {
-  border: 1px solid black;
-  width: 50vw;
-  height: 50vh;
+
+.img {
+  width: 75vw;
+  height: 75vh;
+  object-fit: fill;
+}
+
+.loading {
+  width: 75vw;
+  height: 75vh;
+  background: gray;
 }
