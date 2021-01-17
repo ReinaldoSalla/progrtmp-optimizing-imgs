@@ -1,6 +1,8 @@
 import React, { useState, ReactNode, FunctionComponent } from 'react';
 import './App.css';
 import img from './assets/img.jpg';
+import img2 from './assets/img2.jpg';
+import img3 from './assets/img3.jpg';
 
 // ui
 
@@ -16,12 +18,19 @@ const Container: FunctionComponent<ContainerProps> = ({
   </div>
 );
 
-const Image: FunctionComponent = (): JSX.Element => (
+interface ImageProps {
+  path: string;
+}
+
+const Image: FunctionComponent<ImageProps> = ({
+  path
+}): JSX.Element => (
   <Container> 
     <img
       className='img'
-      src={img}
+      src={path}
       alt='sun'
+      loading='lazy'
     />
   </Container>
 );
@@ -34,32 +43,49 @@ const Loading: FunctionComponent = (): JSX.Element => (
 
 //components
 
-const Lazy: FunctionComponent = (): JSX.Element => {
-  const [isLoading, setIsLoading] = useState(true);
+const computeCN = (
+  state: boolean,
+  block: string,
+  element: string,
+  modifier: string
+): string => {
+  const base = `${block}__${element}`;
+  return state ? `${base} ${base}--${modifier}` : base;
+};
+
+interface LazyProps {
+  id: number
+}
+
+const Lazy: FunctionComponent<LazyProps> = ({
+  id
+}): JSX.Element => {
+  const [loaded, setLoaded] = useState(false);
+  const imgCN = computeCN(loaded, 'lazy', 'img', 'loaded');
   return (
     <Container>
-      {isLoading && <Loading />}
+      {!loaded && <Loading />}
+      <img
+        className={imgCN}
+        src={`https://source.unsplash.com/collection/${id}/1600x900`}
+        alt='random'
+        onLoad={() => setLoaded(true)}
+        loading='lazy' 
+      />  
     </Container> 
   );
 };
-
-
 
 const App = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState(true);
   return (
     <div>
-      {/* {isLoading && <div>Loading</div>}
-      <img 
-        style={isLoading ? {display: 'none'} : {}}
-        className='app__img'
-        src='https://source.unsplash.com/collection/1/1600x900'
-        // src={img}
-        alt='company'
-        onLoad={() => setIsLoading(false)}
-      /> */}
-      <Image />
-      <Lazy />
+      <Image path={img}/>
+      <Image path={img2}/>
+      <Image path={img3}/>
+      {/* <Lazy id={1}/>
+      <Lazy id={2}/>
+      <Lazy id={3}/> */}
     </div>
   );
 };
