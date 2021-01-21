@@ -1,3 +1,7 @@
+body {
+  margin: 0;
+}
+
 .container {
   display: flex;
   justify-content: center;
@@ -9,6 +13,7 @@
 .img {
   width: 75vw;
   height: 75vh;
+  border: 1px solid black;
 }
 
 .loading {

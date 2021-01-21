@@ -1,4 +1,11 @@
-import React, { useState, ReactNode, FunctionComponent } from 'react';
+import React, { 
+  useState, 
+  useEffect,
+  useRef,
+  ReactNode, 
+  FunctionComponent,
+  MutableRefObject
+} from 'react';
 import './App.css';
 import img from './assets/img.jpg';
 import img2 from './assets/img2.jpg';
@@ -19,27 +26,73 @@ const Container: FunctionComponent<ContainerProps> = ({
 );
 
 interface ImageProps {
-  path: string;
+  src: string;
 }
 
 const Image: FunctionComponent<ImageProps> = ({
-  path
+  src,
 }): JSX.Element => (
-  <Container> 
-    <img
-      className='img'
-      src={path}
-      alt='sun'
-      loading='lazy'
-    />
-  </Container>
+  <img
+    className='img'
+    src={src}
+    alt='alt'
+  />
 );
 
 const Loading: FunctionComponent = (): JSX.Element => (
   <div className='loading' />
 );
 
+// hooks
 
+const useHasIntersectedOnce = (
+  domNode: MutableRefObject<HTMLDivElement | null>,
+  threshold = 0.1, 
+  rootMargin = '0px'
+): boolean => {
+  const [hasIntersectedOnce, setHasIntersectedOnce] = useState(false);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  
+  useEffect(() => {
+    const currentDomNode = domNode.current;
+    
+    const onIntersect = (
+      [entry]: IntersectionObserverEntry[], 
+      observerElement: IntersectionObserver
+    ): void => {
+      console.log('callback fired');
+      if (entry.isIntersecting) {
+        setHasIntersectedOnce(true);
+        if (currentDomNode) {
+          observerElement.unobserve(currentDomNode);
+        }
+      }
+    };
+
+    const options = { root: null, rootMargin, threshold };
+
+    const getObserver = () => {
+      if (!observerRef.current) {
+        observerRef.current = new IntersectionObserver(
+          onIntersect, 
+          options
+        );
+        return observerRef.current;
+      }
+      return null;
+    };
+
+    const observer = getObserver();
+    if (observer && currentDomNode) {
+      observer.observe(currentDomNode);
+    }  
+    return () => observer && currentDomNode 
+      ? observer.unobserve(currentDomNode) 
+      : undefined;
+  }, [domNode, rootMargin, threshold]);
+
+  return hasIntersectedOnce;
+}
 
 //components
 
@@ -60,32 +113,33 @@ interface LazyProps {
 const Lazy: FunctionComponent<LazyProps> = ({
   id
 }): JSX.Element => {
-  const [loaded, setLoaded] = useState(false);
-  const imgCN = computeCN(loaded, 'lazy', 'img', 'loaded');
+  const domNode = useRef<HTMLDivElement | null>(null);
+  const hasIntersectedOnce = useHasIntersectedOnce(domNode);
   return (
     <Container>
-      {!loaded && <Loading />}
-      <img
-        className={imgCN}
-        src={`https://source.unsplash.com/collection/${id}/1600x900`}
-        alt='random'
-        onLoad={() => setLoaded(true)}
-        loading='lazy' 
-      />  
+      <div ref={domNode}>
+        {hasIntersectedOnce && (
+          <Image 
+            src={`https://source.unsplash.com/collection/${id}/1600x900`} 
+          />
+        )}
+      </div>
     </Container> 
   );
 };
 
 const App = (): JSX.Element => {
-  const [isLoading, setIsLoading] = useState(true);
   return (
     <div>
-      <Image path={img}/>
+      {/* <Image path={img}/>
       <Image path={img2}/>
-      <Image path={img3}/>
+      <Image path={img3}/> */}
       {/* <Lazy id={1}/>
       <Lazy id={2}/>
       <Lazy id={3}/> */}
+      {new Array(50).fill(0).map((_, index) => (
+        <Lazy key={index} id={index} />
+      ))}
     </div>
   );
 };
