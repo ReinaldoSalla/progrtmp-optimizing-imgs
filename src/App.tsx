@@ -7,40 +7,64 @@ import React, {
   MutableRefObject
 } from 'react';
 import './App.css';
-import img from './assets/img.jpg';
-import img2 from './assets/img2.jpg';
-import img3 from './assets/img3.jpg';
 
 // ui
 
 interface ContainerProps {
   children: ReactNode;
+  containerCN: string;
 }
 
-const Container: FunctionComponent<ContainerProps> = ({
-  children
+interface WrapperProps {
+  children: ReactNode;
+  domNode: MutableRefObject<HTMLDivElement | null>;
+}
+
+const Wrapper: FunctionComponent<WrapperProps> = ({
+  children,
+  domNode
 }): JSX.Element => (
-  <div className='container'>
+  <div className='wrapper' ref={domNode}>
+    {children}
+  </div>
+);
+
+const Container: FunctionComponent<ContainerProps> = ({
+  children,
+  containerCN
+}): JSX.Element => (
+  <div className={containerCN}>
     {children}
   </div>
 );
 
 interface ImageProps {
   src: string;
+  onLoad: () => void;
+  imgCN: string;
 }
 
 const Image: FunctionComponent<ImageProps> = ({
   src,
+  onLoad,
+  imgCN
 }): JSX.Element => (
   <img
-    className='img'
+    className={imgCN}
     src={src}
     alt='alt'
+    onLoad={onLoad}
   />
 );
 
-const Loading: FunctionComponent = (): JSX.Element => (
-  <div className='loading' />
+interface LoadingProps {
+  loadingCN: string;
+}
+
+const Loading: FunctionComponent<LoadingProps> = ({
+  loadingCN
+}): JSX.Element => (
+  <div className={loadingCN} />
 );
 
 // hooks
@@ -92,19 +116,9 @@ const useHasIntersectedOnce = (
   }, [domNode, rootMargin, threshold]);
 
   return hasIntersectedOnce;
-}
+};
 
 //components
-
-const computeCN = (
-  state: boolean,
-  block: string,
-  element: string,
-  modifier: string
-): string => {
-  const base = `${block}__${element}`;
-  return state ? `${base} ${base}--${modifier}` : base;
-};
 
 interface LazyProps {
   id: number
@@ -115,28 +129,32 @@ const Lazy: FunctionComponent<LazyProps> = ({
 }): JSX.Element => {
   const domNode = useRef<HTMLDivElement | null>(null);
   const hasIntersectedOnce = useHasIntersectedOnce(domNode);
+  const [hasLoaded, setHasLoaded] = useState(false);
+
+  const onLoad = () => setHasLoaded(true);
+
+  const containerCN = hasLoaded ? 'container container--loaded' : 'container';
+
+  const imgCN = hasLoaded ? 'img img--loaded' : 'img';
+
   return (
-    <Container>
-      <div ref={domNode}>
-        {hasIntersectedOnce && (
+    <Wrapper domNode={domNode}>
+      {hasIntersectedOnce && (
+        <Container containerCN={containerCN}>
           <Image 
             src={`https://source.unsplash.com/collection/${id}/1600x900`} 
+            imgCN={imgCN}
+            onLoad={onLoad}
           />
-        )}
-      </div>
-    </Container> 
+        </Container>
+      )}
+    </Wrapper> 
   );
 };
 
 const App = (): JSX.Element => {
   return (
     <div>
-      {/* <Image path={img}/>
-      <Image path={img2}/>
-      <Image path={img3}/> */}
-      {/* <Lazy id={1}/>
-      <Lazy id={2}/>
-      <Lazy id={3}/> */}
       {new Array(50).fill(0).map((_, index) => (
         <Lazy key={index} id={index} />
       ))}

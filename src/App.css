@@ -2,34 +2,65 @@ body {
   margin: 0;
 }
 
-.container {
+.wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   box-sizing: border-box;
+  border: 1px solid red;
+}
+
+.container {
+  position: relative;
+  width: 75vw;
+  height: 75vh;
+  background: grey;
+  animation: loading-data 1s infinite forwards;
+  /* animation-name: loading-data;
+  animation-duration: 1.5s;
+  animation-iteration-count: infinite;
+  animation-fill-mode: forwards; */
+}
+
+@keyframes loading-data {
+  0% {
+    opacity: 0.7;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.7;
+  }
+}
+
+.container--loaded {
+  animation: none;
 }
 
 .img {
+  position: absolute;
   width: 75vw;
   height: 75vh;
-  border: 1px solid black;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.img--loaded {
+  opacity: 1;
 }
 
 .loading {
+  position: absolute;
   width: 75vw;
   height: 75vh;
   background: gray;
+  border: 5px solid green;
 }
 
-
-.lazy__img {
+.loading--loaded {
   display: none;
-  width: 75vw;
-  height: 75vh;
-  object-fit: fill;
-}
-
-.lazy__img--loaded {
-  display: block;
 }
