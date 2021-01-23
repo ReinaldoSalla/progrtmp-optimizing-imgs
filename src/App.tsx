@@ -7,6 +7,12 @@ import React, {
   MutableRefObject
 } from 'react';
 import './App.css';
+import img1 from './assets/img.jpg';
+import img2 from './assets/img2.jpg';
+import img3 from './assets/img3.jpg';
+// import img1 from './assets/heavy1.jpg';
+// import img2 from './assets/heavy2.jpg';
+// import img3 from './assets/heavy3.jpg';
 
 // ui
 
@@ -57,21 +63,11 @@ const Image: FunctionComponent<ImageProps> = ({
   />
 );
 
-interface LoadingProps {
-  loadingCN: string;
-}
-
-const Loading: FunctionComponent<LoadingProps> = ({
-  loadingCN
-}): JSX.Element => (
-  <div className={loadingCN} />
-);
-
 // hooks
 
 const useHasIntersectedOnce = (
   domNode: MutableRefObject<HTMLDivElement | null>,
-  threshold = 0.1, 
+  threshold = 0.5, 
   rootMargin = '0px'
 ): boolean => {
   const [hasIntersectedOnce, setHasIntersectedOnce] = useState(false);
@@ -121,7 +117,7 @@ const useHasIntersectedOnce = (
 //components
 
 interface LazyProps {
-  id: number
+  id: any;
 }
 
 const Lazy: FunctionComponent<LazyProps> = ({
@@ -139,15 +135,16 @@ const Lazy: FunctionComponent<LazyProps> = ({
 
   return (
     <Wrapper domNode={domNode}>
+      <Container containerCN={containerCN}>
       {hasIntersectedOnce && (
-        <Container containerCN={containerCN}>
           <Image 
             src={`https://source.unsplash.com/collection/${id}/1600x900`} 
+            // src={id}            
             imgCN={imgCN}
             onLoad={onLoad}
           />
-        </Container>
-      )}
+          )}
+          </Container>
     </Wrapper> 
   );
 };
@@ -158,6 +155,9 @@ const App = (): JSX.Element => {
       {new Array(50).fill(0).map((_, index) => (
         <Lazy key={index} id={index} />
       ))}
+      {/* <Lazy id={img1} />
+      <Lazy id={img2} />
+      <Lazy id={img3} /> */}
     </div>
   );
 };

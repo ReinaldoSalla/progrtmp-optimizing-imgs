@@ -46,21 +46,16 @@ body {
   width: 75vw;
   height: 75vh;
   opacity: 0;
-  transition: opacity 0.5s;
+  /* transition: opacity 1s; */
 }
 
 .img--loaded {
-  opacity: 1;
+  /* opacity: 1; */
+  animation: loading-img 1s forwards; 
 }
 
-.loading {
-  position: absolute;
-  width: 75vw;
-  height: 75vh;
-  background: gray;
-  border: 5px solid green;
-}
-
-.loading--loaded {
-  display: none;
+@keyframes loading-img {
+  100% {
+    opacity: 1;
+  }
 }
