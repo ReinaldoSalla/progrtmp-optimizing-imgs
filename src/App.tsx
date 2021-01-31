@@ -8,12 +8,15 @@ import React, {
 } from 'react';
 import { BrowserRouter, Route } from 'react-router-dom';
 import './App.css';
-// import img1 from './assets/img.jpg';
-// import img2 from './assets/img2.jpg';
-// import img3 from './assets/img3.jpg';
-import img1 from './assets/heavy1.jpg';
-import img2 from './assets/heavy2.jpg';
-import img3 from './assets/heavy3.jpg';
+import img0 from './assets/heavy1.jpg';
+import img1 from './assets/heavy2.jpg';
+import img2 from './assets/heavy3.jpg';
+
+// utils
+
+const getPlaceholders = (n: number): Array<number> => {
+  return new Array(n).fill(0).map((_, index) => index);
+};
 
 // ui
 
@@ -59,7 +62,7 @@ const Image: FunctionComponent<ImageProps> = ({
   <img
     className={imgCN}
     src={src}
-    alt='alt'
+    alt='random picture'
     onLoad={onLoad}
   />
 );
@@ -105,11 +108,11 @@ const useHasIntersectedOnce = (
 //components
 
 interface LazyProps {
-  id: any;
+  src: string;
 }
 
-const LazyReq: FunctionComponent<LazyProps> = ({
-  id
+const Lazy: FunctionComponent<LazyProps> = ({
+  src
 }): JSX.Element => {
   const domNode = useRef<HTMLDivElement | null>(null);
   const hasIntersectedOnce = useHasIntersectedOnce(domNode);
@@ -126,41 +129,12 @@ const LazyReq: FunctionComponent<LazyProps> = ({
       <Container containerCN={containerCN}>
       {hasIntersectedOnce && (
         <Image 
-          src={`https://source.unsplash.com/collection/${id}/1600x900`} 
-          // src={id}            
+          src={src} 
           imgCN={imgCN}
           onLoad={onLoad}
         />
-        )}
-        </Container>
-    </Wrapper> 
-  );
-};
-
-const LazyLocal: FunctionComponent<LazyProps> = ({
-  id
-}): JSX.Element => {
-  const domNode = useRef<HTMLDivElement | null>(null);
-  const hasIntersectedOnce = useHasIntersectedOnce(domNode);
-  const [hasLoaded, setHasLoaded] = useState(false);
-
-  const onLoad = () => setHasLoaded(true);
-   
-  const containerCN = hasLoaded ? 'container container--loaded' : 'container';
-
-  const imgCN = hasLoaded ? 'img img--loaded' : 'img';
-
-  return (
-    <Wrapper domNode={domNode}>
-      <Container containerCN={containerCN}>
-      {hasIntersectedOnce && (
-        <Image 
-          src={id}            
-          imgCN={imgCN}
-          onLoad={onLoad}
-        />
-        )}
-        </Container>
+      )}
+      </Container>
     </Wrapper> 
   );
 };
@@ -170,15 +144,18 @@ const App = (): JSX.Element => {
     <BrowserRouter>
       <Route path='/' exact>
         <h1>Requests</h1>
-        {new Array(50).fill(0).map((_, index) => (
-          <LazyReq key={index} id={index} />
+        {getPlaceholders(100).map((number) => (
+          <Lazy 
+            key={number}
+            src={`https://source.unsplash.com/collection/${number}/1600x900`} 
+          />
         ))}
       </Route>
       <Route path='/local'>
         <h1>local</h1>
-        <LazyLocal id={img1} />
-        <LazyLocal id={img2} />
-        <LazyLocal id={img3} />
+        <Lazy src={img0} />
+        <Lazy src={img1} />
+        <Lazy src={img2} />
       </Route>
     </BrowserRouter>
   );
