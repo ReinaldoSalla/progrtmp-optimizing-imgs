@@ -54,18 +54,69 @@ interface ImageProps {
   imgCN: string;
 }
 
+// before considering format and size
+// const Image: FunctionComponent<ImageProps> = ({
+//   src,
+//   onLoad,
+//   imgCN
+// }): JSX.Element => (
+//   <img
+//     className={imgCN}
+//     src={src}
+//     alt='random picture'
+//     onLoad={onLoad}
+//   />
+// );
+
+// using media='()', and making a new request every time the width changes
+// const Image: FunctionComponent<ImageProps> = ({
+//   src,
+//   onLoad,
+//   imgCN
+// }): JSX.Element => (
+//   // <img
+//   //   className={imgCN}
+//   //   src={src}
+//   //   alt='random picture'
+//   //   onLoad={onLoad}
+//   // />
+//   <picture>
+//     <source
+//       className={imgCN}
+//       srcSet={img0}
+//       media='(min-width: 800px)'
+//       onLoad={onLoad}
+//     />
+//     <img 
+//       src={img2} 
+//       className={imgCN}   
+//       onLoad={onLoad}
+//     />
+//   </picture>
+// );
+
+const viewportWidth = window.innerWidth;
+
 const Image: FunctionComponent<ImageProps> = ({
   src,
   onLoad,
   imgCN
-}): JSX.Element => (
-  <img
-    className={imgCN}
-    src={src}
-    alt='random picture'
-    onLoad={onLoad}
-  />
-);
+}): JSX.Element => {
+  const img = viewportWidth >= 400 ? img0 : img1;
+  return (
+    <picture onLoad={onLoad}>
+      <source
+        className={imgCN}
+        srcSet={img}
+      />
+      <img 
+        className={imgCN}   
+        src={img} 
+        alt=''
+      />
+    </picture>
+  )
+};
 
 // hooks
 
@@ -142,7 +193,7 @@ const Lazy: FunctionComponent<LazyProps> = ({
 const App = (): JSX.Element => {
   return (
     <BrowserRouter>
-      <Route path='/' exact>
+      {/* <Route path='/' exact>
         <h1>Requests</h1>
         {getPlaceholders(100).map((number) => (
           <Lazy 
@@ -150,8 +201,8 @@ const App = (): JSX.Element => {
             src={`https://source.unsplash.com/collection/${number}/1600x900`} 
           />
         ))}
-      </Route>
-      <Route path='/local'>
+      </Route> */}
+      <Route path='/'>
         <h1>local</h1>
         <Lazy src={img0} />
         <Lazy src={img1} />
