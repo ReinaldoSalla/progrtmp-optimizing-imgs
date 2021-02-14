@@ -2,6 +2,10 @@ body {
   margin: 0;
 }
 
+.app__title {
+  text-align: center;
+}
+
 .wrapper {
   display: flex;
   justify-content: center;
