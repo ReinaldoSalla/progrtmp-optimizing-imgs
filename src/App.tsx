@@ -1,75 +1,31 @@
+/*
+Navbar.container.tsx
+Navbar.markup.tsx
+Navbar.styles.ts
+Navbar.actions.ts
+Navbar.reducer.ts
+Navbar.types
+Navbar.constants.ts
+Navbar.animations.ts
+*/
+
 import React, { 
   useState, 
   useEffect,
   useRef,
-  ReactNode, 
-  FunctionComponent,
   MutableRefObject
 } from 'react';
 import './App.css';
 
-// utils
-
-const getPlaceholders = (n: number): Array<number> => {
+function getPlaceholders(n: number) {
   return new Array(n).fill(0).map((_, index) => index);
 };
 
-// ui
-
-interface ContainerProps {
-  children: ReactNode;
-  containerCN: string;
-}
-
-interface WrapperProps {
-  children: ReactNode;
-  domNode: MutableRefObject<HTMLDivElement | null>;
-}
-
-const Wrapper: FunctionComponent<WrapperProps> = ({
-  children,
-  domNode
-}): JSX.Element => (
-  <div className='wrapper' ref={domNode}>
-    {children}
-  </div>
-);
-
-const Container: FunctionComponent<ContainerProps> = ({
-  children,
-  containerCN
-}): JSX.Element => (
-  <div className={containerCN}>
-    {children}
-  </div>
-);
-
-interface ImageProps {
-  src: string;
-  onLoad: () => void;
-  imgCN: string;
-}
-
-const Image: FunctionComponent<ImageProps> = ({
-  src,
-  onLoad,
-  imgCN
-}): JSX.Element => (
-  <img
-    className={imgCN}
-    src={src}
-    alt='random demonstration'
-    onLoad={onLoad}
-  />
-);
-
-// hooks
-
-const useHasIntersectedOnce = (
+function useHasIntersected(
   domNode: MutableRefObject<HTMLDivElement | null>,
   threshold = 0.5, 
   rootMargin = '0px'
-): boolean => {
+) {
   const [hasIntersectedOnce, setHasIntersectedOnce] = useState(false);
   
   useEffect(() => {
@@ -93,7 +49,7 @@ const useHasIntersectedOnce = (
     if (currentDomNode) {
       observer.observe(currentDomNode);
     }  
-    return () => observer.unobserve(currentDomNode as HTMLDivElement);
+    // return () => observer.unobserve(currentDomNode as HTMLDivElement);
   }, [domNode, rootMargin, threshold]);
 
   return hasIntersectedOnce;
@@ -105,38 +61,32 @@ interface LazyProps {
   src: string;
 }
 
-const Lazy: FunctionComponent<LazyProps> = ({
-  src
-}): JSX.Element => {
+function Lazy({ src }: LazyProps) {
   const domNode = useRef<HTMLDivElement | null>(null);
-  const hasIntersectedOnce = useHasIntersectedOnce(domNode);
+  const hasIntersected = useHasIntersected(domNode);
   const [hasLoaded, setHasLoaded] = useState(false);
-
-  const onLoad = () => setHasLoaded(true);
-   
-  const containerCN = hasLoaded ? 'container container--loaded' : 'container';
-
+  const wrapperLoadingCN = hasLoaded ? 'wrapper-loading wrapper-loading--finished' : 'wrapper-loading';
   const imgCN = hasLoaded ? 'img img--loaded' : 'img';
-
   return (
-    <Wrapper domNode={domNode}>
-      <Container containerCN={containerCN}>
-      {hasIntersectedOnce && (
-        <Image 
-          src={src} 
-          imgCN={imgCN}
-          onLoad={onLoad}
+    <div className='wrapper' ref={domNode}>
+      <div className={wrapperLoadingCN}>
+      {hasIntersected && (
+        <img
+          className={imgCN}
+          src={src}
+          alt='random demonstration'
+          onLoad={() => setHasLoaded(true)}
         />
       )}
-      </Container>
-    </Wrapper> 
+      </div>
+    </div> 
   );
 };
 
-const App: FunctionComponent = (): JSX.Element => {
+function App() {
   return (
     <>
-      <h1 className='app__title'>Lazy Loading Images</h1>
+      <h1 className='title'>Lazy Loading Images</h1>
       {getPlaceholders(100).map((id) => (
         <Lazy 
           key={id}

@@ -2,7 +2,7 @@ body {
   margin: 0;
 }
 
-.app__title {
+.title {
   text-align: center;
 }
 
@@ -11,20 +11,14 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  box-sizing: border-box;
-  border: 1px solid red;
 }
 
-.container {
+.wrapper-loading {
   position: relative;
   width: 75vw;
   height: 75vh;
   background: grey;
   animation: loading-data 1s infinite forwards;
-  /* animation-name: loading-data;
-  animation-duration: 1.5s;
-  animation-iteration-count: infinite;
-  animation-fill-mode: forwards; */
 }
 
 @keyframes loading-data {
@@ -41,7 +35,7 @@ body {
   }
 }
 
-.container--loaded {
+.wrapper-loading--finished {
   animation: none;
 }
 
