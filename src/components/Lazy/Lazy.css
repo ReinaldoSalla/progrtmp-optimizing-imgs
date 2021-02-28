@@ -1,0 +1,44 @@
+.lazy__wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.lazy__wrapper-loading {
+  position: relative;
+  width: 75vw;
+  height: 75vh;
+  background: grey;
+  animation: loading-data 1s infinite;
+}
+
+@keyframes loading-data {
+  0% {
+    opacity: 0.7;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.7;
+  }
+}
+
+.lazy__wrapper-loading--finished {
+  animation: none;
+}
+
+.lazy__img {
+  position: absolute;
+  width: 75vw;
+  height: 75vh;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.lazy__img--loaded {
+  opacity: 1;
+}
